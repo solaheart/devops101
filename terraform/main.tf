@@ -74,7 +74,7 @@ module "iam_github_oidc_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-github-oidc-role"
   version = "5.55.0"
 
-  name = format("%s-gtihub-oidc", local.name)
+  name = format("%s-gha-oidc", local.name)
 
   subjects = var.github_subjects
 
@@ -82,5 +82,5 @@ module "iam_github_oidc_role" {
     GetAuthToken = aws_iam_policy.iam_github_oidc.arn
   }
 
-  tags = merge(local.tags, { Name = format("%s-gtihub-oidc", local.name) })
+  tags = merge(local.tags, { Name = format("%s-gha-oidc", local.name) })
 }
