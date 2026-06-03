@@ -4,11 +4,11 @@ name="demo"
 environment="staging"
 
 aws_region    = "ap-southeast-7"
-ecr_repo_name = "demo-cicd"
+ecr_repo_name = "demo-staging-cicd"
 
 # Repo allowed to assume the CI role: https://github.com/xshot9011/demo-cicd
 github_org  = "solaheart"
-github_repo = "demo-cicd"
+github_repo = "devops101"
 
 # Which GitHub OIDC subjects may assume the CI role.
 github_subjects = [
