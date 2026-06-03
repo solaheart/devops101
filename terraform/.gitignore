@@ -1,0 +1,10 @@
+# Local state & overrides
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+
+# Secrets / per-env values
+*.tfvars
+!*.tfvars.example

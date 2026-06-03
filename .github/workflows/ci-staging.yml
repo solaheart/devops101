@@ -1,0 +1,72 @@
+name: CI
+
+on: {}
+  push:
+    branches: [main]
+  # pull_request:
+  #   branches: [main]
+
+# Required for aws-actions/configure-aws-credentials to request the OIDC token
+# used to assume the IAM role (no long-lived AWS keys needed).
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-7
+  # ECR (or other registry) repo to push the multi-arch image to.
+  IMAGE_REPO: 723951822701.dkr.ecr.ap-southeast-7.amazonaws.com/demo-staging-cicd
+  ACCOUNT_ID: 723951822701
+  ROLE_ARN: arn:aws:iam::723951822701:role/demo-staging-github-oidc
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Run unit tests
+        run: python -m unittest discover -v
+
+  build:
+    name: Build multi-arch image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Configure AWS credentials (assume role via OIDC)
+        uses: aws-actions/configure-aws-credentials@6.1.1
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push (multi-arch)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_REPO }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

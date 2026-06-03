@@ -1,0 +1,27 @@
+# Copy to terraform.tfvars and fill in. Do NOT commit terraform.tfvars.
+
+name="demo"
+environment="staging"
+
+aws_region    = "ap-southeast-7"
+ecr_repo_name = "demo-cicd"
+
+# Repo allowed to assume the CI role: https://github.com/xshot9011/demo-cicd
+github_org  = "solaheart"
+github_repo = "demo-cicd"
+
+# Which GitHub OIDC subjects may assume the CI role.
+github_subjects = [
+  "solaheart/*:*"
+]
+
+# Set to false if a GitHub OIDC provider already exists in the account.
+create_oidc_provider = true
+
+tags = {
+  Project   = "demo-cicd"
+  ManagedBy = "terraform"
+  Owner     = "platform-team"
+  Terraform = true
+  Worksapce = "antigravity/demo-cicd"
+}

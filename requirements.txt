@@ -1,0 +1,2 @@
+# No third-party runtime deps — the server uses only the Python stdlib.
+# Add packages here as the demo grows.
